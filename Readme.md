@@ -1,3 +1,3 @@
-# Interfata CLI Baza de date Postgres
+# Interfata TUI Baza de date Postgres
 
-I have c++ dependency management
+TBA
