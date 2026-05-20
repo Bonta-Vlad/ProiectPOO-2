@@ -1,8 +1,6 @@
 cmake_minimum_required (VERSION 3.22)
 
-project(ftxui-starter
-  LANGUAGES CXX
-  VERSION 1.0.0
+project(project
 )
 
 set(CMAKE_CXX_STANDARD 20)
@@ -31,7 +29,7 @@ FetchContent_Declare(libpqxx
     EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(libpqxx ftxui)
-add_executable(project src/main.cpp src/menu.h)
+add_executable(project src/main.cpp src/menu.cpp)
 target_include_directories(project PRIVATE src)
 
 target_link_libraries(project

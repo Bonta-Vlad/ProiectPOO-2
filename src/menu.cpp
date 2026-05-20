@@ -8,8 +8,12 @@
 Menu* Menu::Instance= nullptr;
 int Menu::State= 1;
 
-
-
+Menu* Menu::get_instance(){
+    if (Menu::Instance == nullptr) {
+        Instance= new Menu;
+    }
+    return Instance;
+}
 void Menu::connect(){
     using namespace ftxui;
     std::string port;

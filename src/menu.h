@@ -10,7 +10,7 @@ class Menu{
     public:
     static Menu* get_instance();
     void run();
-    ~Menu();
+    ~Menu(){delete Instance;}
 };
 
 
