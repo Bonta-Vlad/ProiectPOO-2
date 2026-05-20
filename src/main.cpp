@@ -36,8 +36,4 @@ int main(){
   std::cout << screen.ToString() << '\0' << std::endl;
 
   return EXIT_SUCCESS;
-
-
-
-
 }
