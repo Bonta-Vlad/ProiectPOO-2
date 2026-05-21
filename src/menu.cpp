@@ -2,8 +2,10 @@
 #include "ftxui/component/component.hpp"       
 #include "ftxui/component/component_base.hpp"  
 #include "ftxui/component/component_options.hpp"  
+#include "ftxui/dom/elements.hpp"
 #include "ftxui/util/ref.hpp"
 #include "ftxui/component/app.hpp"
+#include <ftxui/dom/elements.hpp>
 #include <ftxui/screen/screen.hpp>
 #include <stdexcept>
 Menu* Menu::Instance= nullptr;
@@ -48,9 +50,23 @@ void Menu::connect(){
     input_host,
     input_port,
     input_user,
-    input_password
+    input_password,
+    input_dbname,
+    submit_bttn
     });
-    app.Loop(component);
+    auto renderer= Renderer(component,[&]{
+        return vbox({
+            hbox({text("Host:"),input_host->Render()}),
+            hbox({text("Port:"),input_port->Render()}),
+            hbox({text("User:"),input_user->Render()}),
+            hbox({text("Password:"),input_password->Render()}),
+            hbox({text("Databasse:"),input_dbname->Render()}),
+            separator(),
+            submit_bttn->Render()
+        });
+    });
+
+    app.Loop(renderer);
 }
 
 void Menu::run(){
