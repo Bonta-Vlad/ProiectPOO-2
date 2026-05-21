@@ -29,8 +29,9 @@ FetchContent_Declare(libpqxx
     EXCLUDE_FROM_ALL
 )
 FetchContent_MakeAvailable(libpqxx ftxui)
-add_executable(project src/main.cpp src/menu.cpp)
-target_include_directories(project PRIVATE src)
+
+add_executable(project src/main.cpp src/menu.cpp src/menu.h)
+target_include_directories(project PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 
 target_link_libraries(project
   PRIVATE ftxui::screen
