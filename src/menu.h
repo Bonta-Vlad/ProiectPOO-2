@@ -1,8 +1,9 @@
-
+#include <pqxx/pqxx>
 
 class Menu{
     static Menu* Instance;
     static int State;
+    pqxx::connection* conn;
     Menu(const Menu& other)= delete;
     Menu operator=(const Menu& other)= delete;
     Menu();
@@ -10,7 +11,7 @@ class Menu{
     public:
     static Menu* get_instance();
     void run();
-    ~Menu(){delete Instance;}
+    ~Menu(){delete Instance;delete conn;}
 };
 
 

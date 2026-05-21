@@ -4,6 +4,7 @@
 #include "ftxui/component/component_options.hpp"  
 #include "ftxui/util/ref.hpp"
 #include "ftxui/component/app.hpp"
+#include <ftxui/screen/screen.hpp>
 #include <stdexcept>
 Menu* Menu::Instance= nullptr;
 int Menu::State= 1;
@@ -16,10 +17,12 @@ Menu* Menu::get_instance(){
 }
 void Menu::connect(){
     using namespace ftxui;
+    auto app = App::TerminalOutput();
     std::string port;
     std::string password;
     std::string hostname;
     std::string username;
+    std::string dbname;
 
     InputOption password_option;
     password_option.password = true;
@@ -28,6 +31,18 @@ void Menu::connect(){
     Component input_host= Input(&hostname,"localhost");
     Component input_user= Input(&username,"postgres");
     Component input_port= Input(&port, "5432");
+    Component input_dbname= Input(&dbname, "postgres");
+
+    Component submit_bttn= Button("Submit", [&]{
+        std::string conarg=
+        "host="+hostname+
+        "port="+port+
+        "user="+username+
+        "password="+password+
+        "dbname="+dbname;
+        conn= new pqxx::connection(conarg);
+        Menu::State=2;
+        app.Exit();});
 
     auto component = Container::Vertical({
     input_host,
@@ -35,8 +50,6 @@ void Menu::connect(){
     input_user,
     input_password
     });
-
-    auto app = App::TerminalOutput();
     app.Loop(component);
 }
 
