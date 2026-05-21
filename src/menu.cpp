@@ -34,13 +34,13 @@ void Menu::connect(){
     Component input_dbname= Input(&dbname, "postgres");
 
     Component submit_bttn= Button("Submit", [&]{
-        std::string conarg=
+        std::string con_arg=
         "host="+hostname+
-        "port="+port+
-        "user="+username+
-        "password="+password+
-        "dbname="+dbname;
-        conn= new pqxx::connection(conarg);
+        " port="+port+
+        " user="+username+
+        " password="+password+
+        " dbname="+dbname;
+        conn= new pqxx::connection(con_arg);
         Menu::State=2;
         app.Exit();});
 
