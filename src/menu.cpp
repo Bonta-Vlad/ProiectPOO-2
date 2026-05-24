@@ -5,9 +5,13 @@
 #include "ftxui/dom/elements.hpp"
 #include "ftxui/util/ref.hpp"
 #include "ftxui/component/app.hpp"
+#include "pqxx/internal/result_iter.hxx"
 #include <ftxui/dom/elements.hpp>
+#include <ftxui/dom/table.hpp>
 #include <ftxui/screen/screen.hpp>
 #include <stdexcept>
+#include <string>
+#include <vector>
 Menu* Menu::Instance= nullptr;
 int Menu::State= 1;
 
@@ -69,11 +73,62 @@ void Menu::connect(){
     app.Loop(renderer);
 }
 
+void Menu::freeform(){
+    using namespace ftxui;
+    std::string sql_query;
+    auto app = App::TerminalOutput();
+    auto query= Input("SQL Query");
+    auto response= Table();
+
+    std::vector<std::string> tabs{
+        "Query",
+        "Response"
+    };
+    int tab_index=0;
+    auto tab_selection= ftxui::Menu(&tabs, &tab_index);
+    auto tab_content= Container::Tab(
+        {
+        query,
+        response
+        },
+        &tab_index
+    );
+    auto submit= Button("Submit",[&] {
+        pqxx::work transaction(*conn);
+        pqxx::result result= transaction.exec(sql_query);
+        transaction.commit();
+        
+        
+    });
+
+    auto main_container= Container::Vertical({
+        Container::Horizontal({
+            tab_selection,
+            submit
+        }),
+        tab_content
+    });
+
+    auto renderer= Renderer(main_container, [&]{
+        return vbox({
+            text("SQL Requsts")| bold | hcenter,
+            hbox({
+                tab_selection->Render()| flex,
+                submit->Render(),
+            }),
+            tab_content->Render()| flex,
+        });
+    });
+    app.Loop(renderer);
+}
+
+
+
 void Menu::run(){
     switch (Menu::State) {
     case 0: return;break;
     case 1: connect();break;
-    case 2: /*freeform()*/;break;
+    case 2: freeform();break;
     default: throw std::runtime_error("Invalid state!"); //TODO: Use custome exception
     }
 }

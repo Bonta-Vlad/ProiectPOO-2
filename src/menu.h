@@ -11,6 +11,7 @@ class Menu{
     public:
     static Menu* get_instance();
     void run();
+    void freeform();
     ~Menu(){delete Instance;delete conn;}
 };
 
