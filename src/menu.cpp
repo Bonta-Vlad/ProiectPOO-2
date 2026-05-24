@@ -7,6 +7,7 @@
 #include "ftxui/component/app.hpp"
 #include "pqxx/internal/result_iter.hxx"
 #include <ftxui/dom/elements.hpp>
+#include <ftxui/dom/node.hpp>
 #include <ftxui/dom/table.hpp>
 #include <ftxui/screen/screen.hpp>
 #include <stdexcept>
@@ -76,10 +77,17 @@ void Menu::connect(){
 void Menu::freeform(){
     using namespace ftxui;
     std::string sql_query;
+    std::string result_text;
     auto app = App::TerminalOutput();
     auto query= Input("SQL Query");
-    auto response= Table();
+    auto response= text("Response:\n"+result_text) ;
 
+    auto respones_render= Renderer([&]{
+        return vbox(response);
+    });
+    auto query_render= Renderer([&]{
+        return vbox(query);
+    });
     std::vector<std::string> tabs{
         "Query",
         "Response"
@@ -88,16 +96,20 @@ void Menu::freeform(){
     auto tab_selection= ftxui::Menu(&tabs, &tab_index);
     auto tab_content= Container::Tab(
         {
-        query,
-        response
+            query_render,
+            respones_render,
         },
         &tab_index
     );
     auto submit= Button("Submit",[&] {
+        result_text= "";
         pqxx::work transaction(*conn);
         pqxx::result result= transaction.exec(sql_query);
         transaction.commit();
-        
+        for (auto const &row: result) {
+            for (auto const &field: row) result_text+= field.c_str();
+            result_text+="\n";
+        }
         
     });
 
